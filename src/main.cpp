@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <bits/stdc++.h>
+#include <string>
 
 using namespace std;
 
@@ -87,9 +89,49 @@ void getToken(string input, string *value, Token *token) {
 
 string shuntingYardConverter(string equation) {
 
-    vector<string> inStack; // should be a list of equation
+    vector<char> inStack(equation.begin(), equation.end());
+    vector<char> opStack;
+    vector<char> outStack;
 
-    equation = equation;
+    cout << "original vector: ";
+
+    for (char i: inStack) {cout << i;}
+
+    cout << endl;
+
+    int index = 0;
+    for (char item: inStack) {
+
+        if (item == '!') {
+
+            inStack[index] = ')';
+
+            for (int i = index; i >= 0; i--) {
+
+                vector<char> characters{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '-'};
+
+                if (find(characters.begin(), characters.end(), inStack[i]) != characters.end()) {
+
+                    inStack.insert(inStack.begin() + i, 'f');
+
+                    inStack.insert(inStack.begin() + i + 1, '(');
+
+                    break;
+
+                }
+            }
+        }
+        index++;
+    }
+
+    cout << "new vector: ";
+
+    for (char i: inStack) {cout << i;}
+
+
+
+
+
 
     return equation;
 
@@ -100,6 +142,21 @@ double shuntingYardEvaluator(string equation) {
     equation = equation;
 
     return 0.0;
+
+}
+
+
+
+int main() {
+
+
+
+    string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
+
+    shuntingYardConverter(equation);
+
+    // cout << "output: " << output << endl;
+
 
 }
 
@@ -124,20 +181,3 @@ double shuntingYardEvaluator(string equation) {
 //     cout << "output: " << token.value << endl;
 
 // }
-
-
-int main() {
-
-
-
-
-
-    string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
-
-    double output = shuntingYardEvaluator(equation);
-
-    cout << "output: " << output << endl;
-
-
-}
-
