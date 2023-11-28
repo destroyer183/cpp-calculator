@@ -2,6 +2,7 @@
 #include <vector>
 #include <bits/stdc++.h>
 #include <string>
+#include <typeinfo>
 
 using namespace std;
 
@@ -10,13 +11,20 @@ using namespace std;
 bool LEFT = true;
 bool RIGHT = false;
 
-int NUMBER = 0;
+int NUMBER = -1;
 int OPERATOR = 0;
 int BRACKET = 3;
 int FUNCTION = 1;
 int COMMA = 5;
 int LEFT_BRACKET = 2;
 int RIGHT_BRACKET = 3;
+
+string STRINGID = "NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE";
+
+
+
+
+
 
 
 
@@ -37,8 +45,13 @@ class Token {
         value = value;
         apply = apply;
     }
+    
 
 };
+
+
+
+Token token;
 
 
 
@@ -59,7 +72,7 @@ Token TOKENS[17] = {
     Token(OPERATOR, 1, LEFT,  "/", 4.4),
     Token(OPERATOR, 1, LEFT,  "*", 4.4),
     Token(OPERATOR, 0, LEFT,  "+", 4.4),
-    Token(OPERATOR, 0, LEFT,  "-", 4.4),
+    Token(OPERATOR, 0, LEFT,  "_", 4.4),
 
     Token(LEFT_BRACKET,  0, RIGHT, "(", 0.0),
     Token(RIGHT_BRACKET, 0, LEFT,  ")", 0.0)
@@ -69,52 +82,52 @@ Token TOKENS[17] = {
 
 
 
-void getToken(string input, string *value, Token *token) {
+Token getToken(string input) {
 
     for (Token i : TOKENS) {
 
         if (i.value == input) {
 
-            *token = i;
+            return i;
 
         }
     }
-    *value = input;
+
+    return Token(NUMBER);
+
 }
 
 
 
 
+void shuntingYardConverter(string equation) {
 
-
-string shuntingYardConverter(string equation) {
-
-    vector<char> inStack(equation.begin(), equation.end());
-    vector<char> opStack;
-    vector<char> outStack;
+    vector<string> inStack(equation.begin(), equation.end());
+    // vector<Token> opStack;
+    // vector<Token> outStack;
 
     cout << "original vector: ";
 
-    for (char i: inStack) {cout << i;}
+    for (string i: inStack) {cout << i;}
 
     cout << endl;
 
     int index = 0;
-    for (char item: inStack) {
+    for (string item: inStack) {
 
-        if (item == '!') {
+        if (item == "!") {
 
-            inStack[index] = ')';
+            inStack[index] = ")";
 
             for (int i = index; i >= 0; i--) {
 
-                vector<char> characters{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '-'};
+                vector<string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
 
                 if (find(characters.begin(), characters.end(), inStack[i]) != characters.end()) {
 
-                    inStack.insert(inStack.begin() + i, 'f');
+                    inStack.insert(inStack.begin() + i, "f");
 
-                    inStack.insert(inStack.begin() + i + 1, '(');
+                    inStack.insert(inStack.begin() + i + 1, "(");
 
                     break;
 
@@ -126,18 +139,63 @@ string shuntingYardConverter(string equation) {
 
     cout << "new vector: ";
 
-    for (char i: inStack) {cout << i;}
+    for (string i: inStack) {cout << i;}
+
+    // while (inStack.size() > 0) {
+
+    // if (true) {
+
+    //     vector<char> tempStack;
+
+
+    //     try {
+
+    //         if (typeid(token).name() != STRINGID && token.value != ")") {
+
+    //             string input = inStack.back();
+
+    //             inStack.pop_back();
+
+    //             Token token = getToken(input);
+
+    //         } else if (typeid(token).name() == STRINGID || token.value == ")") {
+
+    //             string input = inStack.back();
+
+    //             inStack.pop_back();
+
+    //             Token token = getToken(input);
+
+    //         } else {throw(69);}
+
+    //     } catch (...) {
+
+    //         string input = inStack.back();
+
+    //         inStack.pop_back();
+
+    //         Token token = getToken(input);
+
+    //     }
+
+    //     cout << "token: " << token.value << endl;
+
+    //     // break;
+
+
+    //     // after this, if the token is a number, then add the following numbers to an array, convert it to a string, 
+    //     // make token a 'Token' and set the value to the string of numbers.
+
+    // }
 
 
 
 
-
-
-    return equation;
+    // return outStack;
 
 }
 
-double shuntingYardEvaluator(string equation) {
+double shuntingYardEvaluator(vector<string> equation) {
 
     equation = equation;
 
@@ -153,7 +211,13 @@ int main() {
 
     string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
 
+    string test = "e";
+
+    cout << typeid(equation).name() << endl;
+
     shuntingYardConverter(equation);
+
+
 
     // cout << "output: " << output << endl;
 
@@ -161,16 +225,16 @@ int main() {
 }
 
 
-// string valueOutput;
+// string numberOutput;
 // Token tokenOutput;
 
 // string input = "16";
 
-// getToken(input, &valueOutput, &tokenOutput);
+// getToken(input, &numberOutput, &tokenOutput);
 
-// if (valueOutput == input) {
+// if (numberOutput == input) {
 
-//     string token = valueOutput;
+//     string token = numberOutput;
 
 //     cout << "output: " << token;
 
