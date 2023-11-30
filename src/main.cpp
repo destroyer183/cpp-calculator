@@ -2,8 +2,6 @@
 #include <deque>
 #include <bits/stdc++.h>
 #include <string>
-#include <typeinfo>
-#include <map>
 
 
 
@@ -17,15 +15,6 @@ const int FUNCTION = 1;
 const int COMMA = 5;
 const int LEFT_BRACKET = 2;
 const int RIGHT_BRACKET = 3;
-
-
-
-std::string STRINGID = "NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE";
-
-
-
-// std::map<std::string, double (*)(const double&)> map1;
-// std::map<std::string, double (*)(const double&, const double&)> map2;
 
 
 
@@ -201,7 +190,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
         try {
 
-            if (typeid(token).name() != STRINGID && token.value != ")") {
+            if (token.value != ")") {
 
                 input = inStack.front();
 
@@ -211,7 +200,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
                 std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl;
 
-            } else if (typeid(token).name() == STRINGID || token.value == ")") {
+            } else if (token.value == ")") {
 
                 input = inStack.front();
 
