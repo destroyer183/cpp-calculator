@@ -19,32 +19,24 @@ const int RIGHT_BRACKET = 3;
 
 
 
-double math(std::string name, double x, double y) {
-
-    std::deque<std::string> characters{"s", "c", "t", "S", "C", "T"};
-
-    // converting degrees to radians
-    if (find(characters.begin(), characters.end(), name) != characters.end()) x = x*3.14159/180;
-
-    if (name == "s") return sin(x);
-    if (name == "c") return cos(x);
-    if (name == "t") return tan(x);
-    if (name == "S") return tan(x);
-    if (name == "C") return tan(x);
-    if (name == "T") return tan(x);
-    if (name == "l") return log(x);
-    if (name == "f") return tgamma(x + 1);
-    if (name == "#") return sqrt(x);
-
-    if (name == "^") return pow(x, y);
-    if (name == "%") {int x1 = int (x); int y1 = int (y); return x1 % y1;}
-    if (name == "/") return x / y;
-    if (name == "*") return x * y;
-    if (name == "+") return x + y;
-    if (name == "_") return x - y;
-
-    return 0.0;
-}
+enum MathOperation {
+    Sine,
+    Cosine,
+    Tangent,
+    aSine,
+    aCosine,
+    aTangent,
+    Logarithm,
+    Factorial,
+    SquareRoot,
+    Exponential,
+    Modulo,
+    Division,
+    Multiplication,
+    Addition,
+    Subtraction,
+    null
+};
 
 
 
@@ -56,15 +48,45 @@ class Token {
         int precedence;
         bool associativity;
         std::string value;
-        double (*apply)(std::__cxx11::basic_string<char>, double, double);
+        MathOperation apply;
 
-        Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", double (*applye)(std::__cxx11::basic_string<char>, double, double) = math) {
+        Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", MathOperation applye = null) {
             type = typee;
             precedence = precedencee;
             associativity = associativitye;
             value = valuee;
             apply = applye;
         }
+
+        double math(MathOperation operation, double x, double y) {
+
+            std::deque<MathOperation> characters{Sine, Cosine, Tangent, aSine, aCosine, aTangent};
+
+            // converting degrees to radians
+            if (find(characters.begin(), characters.end(), operation) != characters.end()) x = x*3.14159/180;
+
+            switch (operation) {
+                case Sine:       return sin(x);
+                case Cosine:     return cos(x);
+                case Tangent:    return tan(x);
+                case aSine:      return asin(x);
+                case aCosine:    return acos(x);
+                case aTangent:   return atan(x);
+                case Logarithm:  return log(x);
+                case Factorial:  return tgamma(x + 1);
+                case SquareRoot: return sqrt(x);
+
+                case Exponential:    return pow(x, y);
+                case Modulo: {int x1 = int (x); int y1 = int (y); return x1 % y1;}
+                case Division:       return x / y;
+                case Multiplication: return x * y;
+                case Addition:       return x + y;
+                case Subtraction:    return x - y;
+
+            }
+            return 0.0;
+        }
+
 };
 
 
@@ -73,25 +95,25 @@ std::deque<Token> TOKENS;
 
 void makeTokens() {
 
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "s", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "c", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "t", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "S", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "C", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "T", math));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "l", math));
-    TOKENS.push_back(Token(FUNCTION, 4, LEFT, "f", math));
-    TOKENS.push_back(Token(FUNCTION, 2, LEFT, "#", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "s", Sine));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "c", Cosine));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "t", Tangent));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "S", aSine));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "C", aCosine));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "T", aTangent));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "l", Logarithm));
+    TOKENS.push_back(Token(FUNCTION, 4, LEFT, "f", Factorial));
+    TOKENS.push_back(Token(FUNCTION, 2, LEFT, "#", SquareRoot));
 
-    TOKENS.push_back(Token(OPERATOR, 3, RIGHT, "^", math));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "%", math));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "/", math));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "*", math));
-    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "+", math));
-    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "_", math));
+    TOKENS.push_back(Token(OPERATOR, 3, RIGHT, "^", Exponential));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "%", Modulo));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "/", Division));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "*", Multiplication));
+    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "+", Addition));
+    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "_", Subtraction));
 
-    TOKENS.push_back(Token(LEFT_BRACKET,  0, RIGHT, "(", math));
-    TOKENS.push_back(Token(RIGHT_BRACKET, 0, LEFT,  ")", math));
+    TOKENS.push_back(Token(LEFT_BRACKET,  0, RIGHT, "(", null));
+    TOKENS.push_back(Token(RIGHT_BRACKET, 0, LEFT,  ")", null));
 
 }
 
@@ -392,7 +414,7 @@ double shuntingYardEvaluator(std::deque<Token> equation) {
             hist.pop_back();
             if (!i.type) hist.pop_back();
 
-            hist.push_back(i.apply(i.value, x, y));
+            hist.push_back(i.math(i.apply, x, y));
 
         }
     }
@@ -409,7 +431,7 @@ int main() {
 
     Token token = TOKENS[0];
 
-    std::cout << "test: " << token.apply(token.value, 60, 0) << std::endl;
+    std::cout << "test: " << token.math(token.apply, 60, 0) << std::endl;
 
     std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
 
