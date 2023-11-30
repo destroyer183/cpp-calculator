@@ -3,19 +3,20 @@
 #include <bits/stdc++.h>
 #include <string>
 #include <typeinfo>
+#include <map>
 
 
 
-bool LEFT = true;
-bool RIGHT = false;
+const bool LEFT = true;
+const bool RIGHT = false;
 
-int NUMBER = -1;
-int OPERATOR = 0;
-int BRACKET = 3;
-int FUNCTION = 1;
-int COMMA = 5;
-int LEFT_BRACKET = 2;
-int RIGHT_BRACKET = 3;
+const int NUMBER = -1;
+const int OPERATOR = 0;
+const int BRACKET = 3;
+const int FUNCTION = 1;
+const int COMMA = 5;
+const int LEFT_BRACKET = 2;
+const int RIGHT_BRACKET = 3;
 
 
 
@@ -23,65 +24,98 @@ std::string STRINGID = "NSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE";
 
 
 
+// std::map<std::string, double (*)(const double&)> map1;
+// std::map<std::string, double (*)(const double&, const double&)> map2;
+
+
+
+double math(std::string name, double x, double y) {
+
+    std::deque<std::string> characters{"s", "c", "t", "S", "C", "T"};
+
+    // converting degrees to radians
+    if (find(characters.begin(), characters.end(), name) != characters.end()) x = x*3.14159/180;
+
+    if (name == "s") return sin(x);
+    if (name == "c") return cos(x);
+    if (name == "t") return tan(x);
+    if (name == "S") return tan(x);
+    if (name == "C") return tan(x);
+    if (name == "T") return tan(x);
+    if (name == "l") return log(x);
+    if (name == "f") return tgamma(x + 1);
+    if (name == "#") return sqrt(x);
+
+    if (name == "^") return pow(x, y);
+    if (name == "%") {int x1 = int (x); int y1 = int (y); return x1 % y1;}
+    if (name == "/") return x / y;
+    if (name == "*") return x * y;
+    if (name == "+") return x + y;
+    if (name == "_") return x - y;
+
+    return 0.0;
+}
+
+
+
 class Token {
 
     public:
 
-    int type;
-    int precedence;
-    bool associativity;
-    std::string value;
-    double apply;
+        int type;
+        int precedence;
+        bool associativity;
+        std::string value;
+        double (*apply)(std::__cxx11::basic_string<char>, double, double);
 
-    Token(int type = 0, int precedence = 0, bool associativity = false, std::string value = "", double apply = 0.0) {
-        type = type;
-        precedence = precedence;
-        associativity = associativity;
-        value = value;
-        apply = apply;
-    }
-    
-
+        Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", double (*applye)(std::__cxx11::basic_string<char>, double, double) = math) {
+            type = typee;
+            precedence = precedencee;
+            associativity = associativitye;
+            value = valuee;
+            apply = applye;
+        }
 };
 
 
 
-Token token;
+std::deque<Token> TOKENS;
 
+void makeTokens() {
 
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "s", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "c", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "t", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "S", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "C", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "T", math));
+    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "l", math));
+    TOKENS.push_back(Token(FUNCTION, 4, LEFT, "f", math));
+    TOKENS.push_back(Token(FUNCTION, 2, LEFT, "#", math));
 
-Token TOKENS[17] = {
+    TOKENS.push_back(Token(OPERATOR, 3, RIGHT, "^", math));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "%", math));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "/", math));
+    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "*", math));
+    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "+", math));
+    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "_", math));
 
-    Token(FUNCTION, 5, LEFT, "s", 4.4),
-    Token(FUNCTION, 5, LEFT, "c", 4.4),
-    Token(FUNCTION, 5, LEFT, "t", 4.4),
-    Token(FUNCTION, 5, LEFT, "S", 4.4),
-    Token(FUNCTION, 5, LEFT, "C", 4.4),
-    Token(FUNCTION, 5, LEFT, "T", 4.4),
-    Token(FUNCTION, 5, LEFT, "l", 4.4),
-    Token(FUNCTION, 4, LEFT, "f", 4.4),
-    Token(FUNCTION, 2, LEFT, "#", 4.4),
+    TOKENS.push_back(Token(LEFT_BRACKET,  0, RIGHT, "(", math));
+    TOKENS.push_back(Token(RIGHT_BRACKET, 0, LEFT,  ")", math));
 
-    Token(OPERATOR, 3, RIGHT, "^", 4.4),
-    Token(OPERATOR, 1, LEFT,  "%", 4.4),
-    Token(OPERATOR, 1, LEFT,  "/", 4.4),
-    Token(OPERATOR, 1, LEFT,  "*", 4.4),
-    Token(OPERATOR, 0, LEFT,  "+", 4.4),
-    Token(OPERATOR, 0, LEFT,  "_", 4.4),
-
-    Token(LEFT_BRACKET,  0, RIGHT, "(", 0.0),
-    Token(RIGHT_BRACKET, 0, LEFT,  ")", 0.0)
-
-};
-
+}
 
 
 
 int getToken(std::string input, Token *token) {
 
+    std::cout << "input: " << input << std::endl;
+
     for (Token i : TOKENS) {
 
         if (i.value == input) {
+
+            std::cout << "HEREEEEEEEEEEEEEEEEEEE" << std::endl;
 
             *token = i;
 
@@ -96,7 +130,6 @@ int getToken(std::string input, Token *token) {
     temp.precedence = 0;
     temp.associativity = LEFT;
     temp.value = input;
-    temp.apply = 0.0;
 
     *token = temp;
 
@@ -112,6 +145,18 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
     std::deque<std::string> inStack;
     std::deque<Token> opStack;
     std::deque<Token> outStack;
+    std::deque<std::string> tempStack;
+    std::deque<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
+
+    int index = 0;
+
+    Token token;
+    Token temp;
+
+    std::string nums;
+    std::string input;
+
+    std::cout << "size: " << inStack.size() << std::endl;
 
     for (char c: equation) {inStack.push_back(std::string(1, c));}
 
@@ -121,7 +166,6 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
     std::cout << std::endl;
 
-    int index = 0;
 
     for (std::string item: inStack) {
 
@@ -130,8 +174,6 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
             inStack[index] = ")";
 
             for (int i = index; i >= 0; i--) {
-
-                std::deque<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
 
                 if (find(characters.begin(), characters.end(), inStack[i]) == characters.end()) {
 
@@ -153,43 +195,43 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
     std::cout << std::endl;
 
-    while (inStack.size() > 0) {
+    while (inStack.size() > 0 && inStack.size() < 1000) {
 
-        std::deque<std::string> tempStack;
+        tempStack = {};
 
         try {
 
             if (typeid(token).name() != STRINGID && token.value != ")") {
 
-                std::string input = inStack.front();
+                input = inStack.front();
 
                 inStack.pop_front();
 
                 getToken(input, &token);
 
-                std::cout << "token.type: " << token.type << std::endl << "token.value: " << token.value << std::endl;
+                std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl;
 
             } else if (typeid(token).name() == STRINGID || token.value == ")") {
 
-                std::string input = inStack.front();
+                input = inStack.front();
 
                 inStack.pop_front();
 
                 getToken(input, &token);
 
-                std::cout << "token.type: " << token.type << std::endl << "token.value: " << token.value << std::endl;
+                std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl;
 
             } else {throw(69);}
 
         } catch (...) {
 
-            std::string input = inStack.front();
+            input = inStack.front();
 
             inStack.pop_front();
 
             getToken(input, &token);
 
-            std::cout << "token.type: " << token.type << std::endl << "token.value: " << token.value << std::endl;
+            std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl;
 
         }
 
@@ -201,8 +243,6 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
             std::cout << "yes" << std::endl;
 
-            std::deque<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
-
             if (find(characters.begin(), characters.end(), token.value) != characters.end()) {
 
                 try {
@@ -211,22 +251,28 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
                         tempStack.push_back(token.value);
 
-                        std::string input = inStack.front();
+                        if (inStack.size() > 0) {
 
-                        inStack.pop_front();
+                            input = inStack.front();
 
-                        getToken(input, &token);
+                            inStack.pop_front();
+
+                            getToken(input, &token);
+
+                        } else {break;}
 
                     }
                 } catch (...) {}
 
-                std::string nums;
+                nums = "";
 
                 for (std::string i : tempStack) {nums += i;}
 
                 token.value = nums;
 
                 std::cout << "token.value: " << token.value << std::endl;
+
+                outStack.push_back(token);
             }
 
         }
@@ -248,7 +294,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
                     opStack.back().precedence == token.precedence &&
                     token.associativity))) {
                         
-                        Token temp = opStack.back();
+                        temp = opStack.back();
 
                         outStack.push_back(temp);
 
@@ -274,13 +320,14 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
                 while (opStack.size() > 0 && opStack.back().type != LEFT_BRACKET) {
 
-                    Token temp = opStack.back();
+                    temp = opStack.back();
 
                     outStack.push_back(temp);
 
                     opStack.pop_back();
 
                 }
+                opStack.pop_back();
             }
 
 
@@ -288,6 +335,10 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
         } catch (...) {}
 
         std::cout << "bruh: " << inStack.size() << std::endl;
+
+        if (inStack.size() > 0) {
+            std::cout << "still going" << std::endl;
+        }
 
 
 
@@ -297,7 +348,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
 
     while (opStack.size() > 0) {
-        Token temp = opStack.back();
+        temp = opStack.back();
         outStack.push_back(temp);
         opStack.pop_back();
     }
@@ -305,8 +356,9 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
     
     std::cout << "equation in RPN: ";
     for (Token i : outStack) {
-        std::cout << i.value;
+        std::cout << i.value << " ";   
     }
+    std::cout << std::endl;
 
     return outStack;
 
@@ -324,21 +376,22 @@ double shuntingYardEvaluator(std::deque<std::string> equation) {
 
 int main() {
 
+    makeTokens();
+
+    Token token = TOKENS[0];
+
+    std::cout << "test: " << token.apply(token.value, 60, 0) << std::endl;
+
+    std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
+
+    // std::deque<Token> stack = shuntingYardConverter(equation);
 
 
-    std::string equation = "44 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
-
-    std::string test = "e";
-
-    std::cout << typeid(equation).name() << std::endl;
-
-    std::deque<Token> stack = shuntingYardConverter(equation);
-
-
-    std::cout << "equation in RPN: ";
-    for (Token i : stack) {
-        std::cout << i.value;
-    }
+    // std::cout << "equation in RPN: ";
+    // for (Token i : stack) {
+    //     std::cout << i.value << " ";
+    // }
+    // std::cout << std::endl;
 
 
 
