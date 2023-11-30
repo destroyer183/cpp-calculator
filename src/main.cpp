@@ -82,11 +82,11 @@ class Token {
                 case Multiplication: return x * y;
                 case Addition:       return x + y;
                 case Subtraction:    return x - y;
+                case null: std::cout << "well fuck, there is a bug." << std::endl;
 
             }
             return 0.0;
         }
-
 };
 
 
