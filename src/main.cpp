@@ -3,7 +3,23 @@
 #include <bits/stdc++.h>
 #include <string>
 #include <string.h>
+#include <cmath>
 
+#define degreesToRadians(degrees) ((degrees * M_PI) / 180.0)
+#define radiansToDegrees(radians) ((radians * 180) / M_PI)
+#define defineToken(type, precedence, associativity, value, apply) TOKENS.push_back(Token(type, precedence, associativity, value, apply))
+#define popAppend(temp, popStack, appendStack) ({\
+    temp = popStack.back();\
+    appendStack.push_back(temp);\
+    popStack.pop_back();\
+    })
+
+
+
+
+#define I_declareth int
+#define to_be_equivalent_to =
+#define my_good_sir ;
 
 
 const bool LEFT = true;
@@ -16,6 +32,8 @@ const int FUNCTION = 1;
 const int COMMA = 5;
 const int LEFT_BRACKET = 2;
 const int RIGHT_BRACKET = 3;
+
+I_declareth x to_be_equivalent_to 3 my_good_sir
 
 
 
@@ -60,18 +78,13 @@ class Token {
 
         double math(MathOperation operation, double x, double y) {
 
-            std::deque<MathOperation> characters{Sine, Cosine, Tangent, aSine, aCosine, aTangent};
-
-            // converting degrees to radians
-            if (find(characters.begin(), characters.end(), operation) != characters.end()) x = x*3.14159/180;
-
             switch (operation) {
-                case Sine:       return sin(x);
-                case Cosine:     return cos(x);
-                case Tangent:    return tan(x);
-                case aSine:      return asin(x);
-                case aCosine:    return acos(x);
-                case aTangent:   return atan(x);
+                case Sine:       return sin(degreesToRadians(x));
+                case Cosine:     return cos(degreesToRadians(x));
+                case Tangent:    return tan(degreesToRadians(x));
+                case aSine:      return asin(radiansToDegrees(x));
+                case aCosine:    return acos(radiansToDegrees(x));
+                case aTangent:   return atan(radiansToDegrees(x));
                 case Logarithm:  return log(x);
                 case Factorial:  return tgamma(x + 1);
                 case SquareRoot: return sqrt(x);
@@ -82,6 +95,7 @@ class Token {
                 case Multiplication: return x * y;
                 case Addition:       return x + y;
                 case Subtraction:    return x - y;
+
                 case null: std::cout << "well fuck, there is a bug." << std::endl;
 
             }
@@ -95,25 +109,25 @@ std::deque<Token> TOKENS;
 
 void makeTokens() {
 
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "s", Sine));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "c", Cosine));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "t", Tangent));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "S", aSine));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "C", aCosine));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "T", aTangent));
-    TOKENS.push_back(Token(FUNCTION, 5, LEFT, "l", Logarithm));
-    TOKENS.push_back(Token(FUNCTION, 4, LEFT, "f", Factorial));
-    TOKENS.push_back(Token(FUNCTION, 2, LEFT, "#", SquareRoot));
+    defineToken(FUNCTION, 5, LEFT, "s", Sine);
+    defineToken(FUNCTION, 5, LEFT, "c", Cosine);
+    defineToken(FUNCTION, 5, LEFT, "t", Tangent);
+    defineToken(FUNCTION, 5, LEFT, "S", aSine);
+    defineToken(FUNCTION, 5, LEFT, "C", aCosine);
+    defineToken(FUNCTION, 5, LEFT, "T", aTangent);
+    defineToken(FUNCTION, 5, LEFT, "l", Logarithm);
+    defineToken(FUNCTION, 4, LEFT, "f", Factorial);
+    defineToken(FUNCTION, 2, LEFT, "#", SquareRoot);
 
-    TOKENS.push_back(Token(OPERATOR, 3, RIGHT, "^", Exponential));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "%", Modulo));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "/", Division));
-    TOKENS.push_back(Token(OPERATOR, 1, LEFT,  "*", Multiplication));
-    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "+", Addition));
-    TOKENS.push_back(Token(OPERATOR, 0, LEFT,  "_", Subtraction));
+    defineToken(OPERATOR, 3, RIGHT, "^", Exponential);
+    defineToken(OPERATOR, 1, LEFT,  "%", Modulo);
+    defineToken(OPERATOR, 1, LEFT,  "/", Division);
+    defineToken(OPERATOR, 1, LEFT,  "*", Multiplication);
+    defineToken(OPERATOR, 0, LEFT,  "+", Addition);
+    defineToken(OPERATOR, 0, LEFT,  "_", Subtraction);
 
-    TOKENS.push_back(Token(LEFT_BRACKET,  0, RIGHT, "(", null));
-    TOKENS.push_back(Token(RIGHT_BRACKET, 0, LEFT,  ")", null));
+    defineToken(LEFT_BRACKET,  0, RIGHT, "(", null);
+    defineToken(RIGHT_BRACKET, 0, LEFT,  ")", null);
 
 }
 
@@ -159,6 +173,12 @@ int getToken(std::string input, Token *token) {
 
 }
 
+
+#define newToken(input, stack, token) ({\
+    input = stack.front();\
+    stack.pop_front();\
+    getToken(input, &token);\
+})
 
 
 
@@ -221,45 +241,9 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
         tempStack = {};
 
-        try {
+        newToken(input, inStack, token);
 
-            if (token.value != ")") {
-
-                input = inStack.front();
-
-                inStack.pop_front();
-
-                getToken(input, &token);
-
-                std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl << std::endl;
-
-            } else if (token.value == ")") {
-
-                input = inStack.front();
-
-                inStack.pop_front();
-
-                getToken(input, &token);
-
-                std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl << std::endl;
-
-            } else {throw(69);}
-
-        } catch (...) {
-
-            input = inStack.front();
-
-            inStack.pop_front();
-
-            getToken(input, &token);
-
-            std::cout << "token.value: " << token.value << std::endl << "token.type: " << token.type << std::endl << std::endl;
-
-        }
-
-
-
-        if (token.value == " ") {continue;}
+        if (token.value == " ") continue;
 
         if (token.type == NUMBER) {
 
@@ -275,11 +259,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
                         if (inStack.size() > 0) {
 
-                            input = inStack.front();
-
-                            inStack.pop_front();
-
-                            getToken(input, &token);
+                            newToken(input, inStack, token);
 
                         } else {break;}
 
@@ -289,8 +269,6 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
                 nums = "";
 
                 for (std::string i : tempStack) {nums += i;}
-
-                // token.value = nums; // the token is already a new token, and not 3 any more.
 
                 std::cout << "new number: " << nums << std::endl << "token.type: " << -1 << std::endl << std::endl;
 
@@ -303,11 +281,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
         try {
 
-            if (token.type == FUNCTION) {
-
-                opStack.push_back(token);
-
-            }
+            if (token.type == FUNCTION) opStack.push_back(token);
 
 
 
@@ -317,12 +291,8 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
                     opStack.back().precedence > token.precedence || (
                     opStack.back().precedence == token.precedence &&
                     token.associativity))) {
-                        
-                        temp = opStack.back();
 
-                        outStack.push_back(temp);
-
-                        opStack.pop_back();
+                        popAppend(temp, opStack, outStack);
 
                     }
 
@@ -332,23 +302,15 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
 
 
-            else if (token.type == LEFT_BRACKET) {
+            else if (token.type == LEFT_BRACKET) opStack.push_back(token);
 
-                opStack.push_back(token);
-
-            }
-
-
+    
 
             else if (token.type == RIGHT_BRACKET) {
 
                 while (opStack.size() > 0 && opStack.back().type != LEFT_BRACKET) {
 
-                    temp = opStack.back();
-
-                    outStack.push_back(temp);
-
-                    opStack.pop_back();
+                    popAppend(temp, opStack, outStack);
 
                 }
                 opStack.pop_back();
@@ -363,17 +325,13 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
 
 
-    while (opStack.size() > 0) {
-        temp = opStack.back();
-        outStack.push_back(temp);
-        opStack.pop_back();
-    }
+    while (opStack.size() > 0) popAppend(temp, opStack, outStack);
 
     
     std::cout << "equation in RPN: ";
-    for (Token i : outStack) {
-        std::cout << i.value << " ";   
-    }
+
+    for (Token i : outStack) std::cout << i.value << " ";
+
     std::cout << std::endl;
 
     return outStack;
@@ -412,6 +370,7 @@ double shuntingYardEvaluator(std::deque<Token> equation) {
             std::cout << "num1: " << x << std::endl << "num2: " << y << std::endl << "apply: " << i.value << std::endl;
 
             hist.pop_back();
+            
             if (!i.type) hist.pop_back();
 
             hist.push_back(i.math(i.apply, x, y));
@@ -453,10 +412,6 @@ int main() {
 
 
     std::cout << "solution: " << solution << std::endl;
-
-
-
-    // std::cout << "output: " << output << std::endl;
 
 
 }
