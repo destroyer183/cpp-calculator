@@ -16,10 +16,12 @@
 
 
 
-
 #define I_declareth int
 #define to_be_equivalent_to =
 #define my_good_sir ;
+
+I_declareth x to_be_equivalent_to 3 my_good_sir
+
 
 
 const bool LEFT = true;
@@ -32,8 +34,6 @@ const int FUNCTION = 1;
 const int COMMA = 5;
 const int LEFT_BRACKET = 2;
 const int RIGHT_BRACKET = 3;
-
-I_declareth x to_be_equivalent_to 3 my_good_sir
 
 
 
@@ -76,15 +76,17 @@ class Token {
             apply = applye;
         }
 
-        double math(MathOperation operation, double x, double y) {
+        double math(MathOperation operation, double x, double y, bool isRadians) {
+
+            
 
             switch (operation) {
-                case Sine:       return sin(degreesToRadians(x));
-                case Cosine:     return cos(degreesToRadians(x));
-                case Tangent:    return tan(degreesToRadians(x));
-                case aSine:      return asin(radiansToDegrees(x));
-                case aCosine:    return acos(radiansToDegrees(x));
-                case aTangent:   return atan(radiansToDegrees(x));
+                case Sine:       if (isRadians) return sin(x); else return sin(degreesToRadians(x));
+                case Cosine:     if (isRadians) return cos(x); else return cos(degreesToRadians(x));
+                case Tangent:    if (isRadians) return tan(x); else return tan(degreesToRadians(x));
+                case aSine:      if (isRadians) return asin(x); else return asin(radiansToDegrees(x));
+                case aCosine:    if (isRadians) return acos(x); else return acos(radiansToDegrees(x));
+                case aTangent:   if (isRadians) return atan(x); else return atan(radiansToDegrees(x));
                 case Logarithm:  return log(x);
                 case Factorial:  return tgamma(x + 1);
                 case SquareRoot: return sqrt(x);
@@ -96,7 +98,7 @@ class Token {
                 case Addition:       return x + y;
                 case Subtraction:    return x - y;
 
-                case null: std::cout << "well fuck, there is a bug." << std::endl;
+                case null: std::cout << "well shit, there is a bug." << std::endl;
 
             }
             return 0.0;
@@ -141,17 +143,9 @@ int getToken(std::string input, Token *token) {
 
         if (i.value == input) {
 
-            Token temp;
+            *token = i;
 
-            temp.type = i.type;
-            temp.precedence = i.precedence;
-            temp.associativity = i.associativity;
-            temp.value = i.value;
-            temp.apply = i.apply;
-
-            *token = temp;
-
-            std::cout << "token set: " << temp.value << std::endl;
+            std::cout << "token set: " << i.value << std::endl;
 
             return 0;
 
@@ -200,7 +194,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
     std::cout << "size: " << inStack.size() << std::endl;
 
-    for (char c: equation) {inStack.push_back(std::string(1, c));}
+    for (char c: equation) inStack.push_back(std::string(1, c));
 
     std::cout << "original deque: ";
 
@@ -347,7 +341,7 @@ std::vector<double> findNumbers(int type, std::deque<double> hist) {
     return std::vector<double> {0.0, 0.0};
 }
 
-double shuntingYardEvaluator(std::deque<Token> equation) {
+double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
 
     std::deque<Token> stack = equation;
 
@@ -373,7 +367,7 @@ double shuntingYardEvaluator(std::deque<Token> equation) {
             
             if (!i.type) hist.pop_back();
 
-            hist.push_back(i.math(i.apply, x, y));
+            hist.push_back(i.math(i.apply, x, y, isRadians));
 
         }
     }
@@ -390,14 +384,17 @@ int main() {
 
     Token token = TOKENS[0];
 
-    std::cout << "test: " << token.math(token.apply, 60, 0) << std::endl;
+    bool isRadians = false;
+
+    std::cout << "test: " << token.math(token.apply, 60, 0, isRadians) << std::endl;
 
     std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
 
+    equation = "s(60)";
+
+
+
     std::deque<Token> stack = shuntingYardConverter(equation);
-
-
-
 
     std::cout << "equation in RPN: ";
     for (Token i : stack) {
@@ -406,10 +403,7 @@ int main() {
     std::cout << std::endl;
 
 
-
-    double solution = shuntingYardEvaluator(stack);
-
-
+    double solution = shuntingYardEvaluator(stack, isRadians);
 
     std::cout << "solution: " << solution << std::endl;
 
