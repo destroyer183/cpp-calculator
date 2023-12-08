@@ -34,6 +34,208 @@ const int COMMA = 5;
 const int LEFT_BRACKET = 2;
 const int RIGHT_BRACKET = 3;
 
+template <typename T>
+class Vector {
+private:
+    size_t size;  // Number of elements in the vector
+    size_t capacity;  // Capacity of the array
+
+public:
+
+    T* array;  // Dynamic array to store elements
+
+
+    // Constructor
+    Vector(size_t initialSize = 0) : size(initialSize), capacity(initialSize * 2) {
+
+        if (capacity == 0) ++capacity;
+        array = new T[capacity];
+    }
+
+    // Destructor
+    ~Vector() {
+        delete[] array;
+    }
+
+    // Getter for size
+    size_t getSize() const {
+        return size;
+    }
+
+    // Access element at index
+    T& operator[](size_t index) {
+        return array[index];
+    }
+
+    // Push element to the back
+    void push_back(const T& value) {
+        if (size == capacity) {
+            // increasee the capacity
+            capacity++;
+
+            // Create a new array with double capacity
+            T* newArray = new T[capacity];
+
+            // Copy elements to the new array
+            for (size_t i = 0; i < size; ++i) {
+                newArray[i] = array[i];
+            }
+
+            // Delete the old array
+            delete[] array;
+
+            // Point to the new array
+            array = newArray;
+        }
+
+        // Add the new element to the end
+        array[size] = value;
+        ++size;
+    }
+
+    // pop element from front
+    void pop_front() {
+
+        // create a new array to store old array without first index
+        T* newArray = new T[capacity];
+
+        // add every element from old array to new array, but skip first element
+        for (size_t i = 0; i < size-1; ++i) {
+            newArray[i] = array[i + 1];
+        }
+
+        // delete the old array
+        delete[] array;
+
+        // point to the new array
+        array = newArray;
+        --size;
+    }
+
+    // pop element from back
+    void pop_back() {
+
+        // create a new array to store old array without first index
+        T* newArray = new T[capacity];
+
+        // add every element from old array to new array, but skip last element
+        for (size_t i = 0; i < size-2; ++i) {
+            newArray[i] = array[i];
+        }
+
+        // delete the old array
+        delete[] array;
+
+        // point to the new array
+        array = newArray;
+        --size;
+
+    }
+
+    // function to pop element by index and return popped element
+    T pop(int index=-10) {
+
+        if (index == -10) index = size-1;
+
+        // create a new array to store old array without element at index
+        T* newArray = new T[capacity];
+
+        // add every element before index from old array to new array
+        for (int i = 0; i < index; ++i) {
+            newArray[i] = array[i];
+        }
+
+        // add every element after index from old array to new array
+        for (size_t i = index; i < size-1; ++i) {
+            newArray[i] = array[i + 1];
+        }
+
+        // create item to be returned
+        T item = array[index];
+
+        // delete the old array
+        delete[] array;
+
+        // point to the new array
+        array = newArray;
+        --size;
+
+        // return popped item
+        return item;
+    }
+
+
+    // get element at front
+    T front() {return array[0];}
+    
+
+
+    // get element at back
+    T back() {return array[size-1];}
+
+
+    // insert element at index
+    void insert(int index, const T& value) {
+
+        if (size == capacity) {
+
+            // increase the capacity
+            capacity++;
+        }
+
+        // Create a new array with double capacity
+        T* newArray = new T[capacity];
+        
+
+        // add every element before index from old array to new array
+        for (int i = 0; i < index; ++i) {
+            newArray[i] = array[i];
+        }
+
+        // add element at index
+        newArray[index] = value;
+
+        // add every element after index from old array to new array
+        for (size_t i = index; i < size; ++i) {
+            newArray[i + 1] = array[i];
+        }
+
+        delete[] array;
+
+        array = newArray;
+        ++size;
+
+    }
+
+    // function to return index of string if string is in array
+    int find(std::string value) {
+
+        // loop through every index of the array
+
+        for (size_t i = 0; i < size; ++i) {
+            if (array[i] == value) return i;
+        }
+
+        return -1;
+
+
+    }
+
+    // function to return index of last occurence of string if string is in array
+    int rfind(std::string value) {
+
+        // loop through every index of the array backwards
+        for (size_t i = size; i > 0; --i) {
+            if (array[i] == value) return i;
+        }
+    
+    return -1;
+
+    }
+
+
+};
+
 
 
 enum MathOperation {
@@ -106,7 +308,7 @@ class Token {
 
 
 
-std::deque<Token> TOKENS;
+Vector<Token> TOKENS;
 
 void makeTokens() {
 
@@ -138,13 +340,15 @@ int getToken(std::string input, Token *token) {
 
     std::cout << "input: " << input << std::endl;
 
-    for (Token i : TOKENS) {
+    for (size_t i = 0; i < TOKENS.getSize(); ++i) { 
 
-        if (i.value == input) {
+        // std::cout << "TOKENS[i]: " << TOKENS[i].value << std::endl;
 
-            *token = i;
+        if (TOKENS[i].value == input) {
+            
+            *token = TOKENS[i];
 
-            std::cout << "token set: " << i.value << std::endl;
+            std::cout << "token set: " << TOKENS[i].value << std::endl;
 
             return 0;
 
@@ -175,13 +379,16 @@ int getToken(std::string input, Token *token) {
 
 
 
-std::deque<Token> shuntingYardConverter(std::string equation) {
+Vector<Token> shuntingYardConverter(std::string equation) {
 
-    std::deque<std::string> inStack;
-    std::deque<Token> opStack;
-    std::deque<Token> outStack;
-    std::deque<std::string> tempStack;
-    std::deque<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
+    Vector<std::string> inStack;
+    Vector<Token> opStack;
+    Vector<Token> outStack;
+    Vector<std::string> tempStack;
+    std::string chars = "1234567890.-";
+    Vector<std::string> characters;
+
+    for (char i : chars) characters.push_back(std::string(1, i));
 
     int index = 0;
 
@@ -191,30 +398,30 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
     std::string nums;
     std::string input;
 
-    std::cout << "size: " << inStack.size() << std::endl;
+    std::cout << "size: " << inStack.getSize() << std::endl;
 
     for (char c: equation) inStack.push_back(std::string(1, c));
 
     std::cout << "original deque: ";
 
-    for (std::string i: inStack) {std::cout << i;}
+    for (size_t i = 0; i < inStack.getSize(); ++i) std::cout << inStack[i];
 
     std::cout << std::endl;
 
 
-    for (std::string item: inStack) {
+    for (size_t i = 0; i < inStack.getSize(); ++i) {
 
-        if (item == "!") {
+        if (inStack[i] == "!") {
 
             inStack[index] = ")";
 
             for (int i = index; i >= 0; i--) {
 
-                if (find(characters.begin(), characters.end(), inStack[i]) == characters.end()) {
+                if (characters.find(inStack[i]) == -1) {
 
-                    inStack.insert(inStack.begin() + i - 1, "f");
+                    inStack.insert(i - 1, "f");
 
-                    inStack.insert(inStack.begin() + i, "(");
+                    inStack.insert(i, "(");
 
                     break;
 
@@ -226,11 +433,11 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
     std::cout << "new deque: ";
 
-    for (std::string i: inStack) {std::cout << i;}
+    for (size_t i = 0; i < inStack.getSize(); ++i) std::cout << inStack[i];
 
     std::cout << std::endl;
 
-    while (inStack.size() > 0 && inStack.size() < 1000) {
+    while (inStack.getSize() > 0 && inStack.getSize() < 1000) {
 
         tempStack = {};
 
@@ -240,17 +447,21 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
         if (token.type == NUMBER) {
 
-            if (find(characters.begin(), characters.end(), token.value) != characters.end()) {
+            if (characters.find(token.value) != -1) {
 
                 try {
 
-                    while (find(characters.begin(), characters.end(), token.value) != characters.end()) {
+                    while (characters.find(token.value) != -1) {
 
                         std::cout << "number found" << std::endl << std::endl;
 
+
                         tempStack.push_back(token.value);
 
-                        if (inStack.size() > 0) {
+                        std::cout << "here";
+
+
+                        if (inStack.getSize() > 0) {
 
                             newToken(input, inStack, token);
 
@@ -261,7 +472,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
                 nums = "";
 
-                for (std::string i : tempStack) {nums += i;}
+                for (size_t i = 0; i < tempStack.getSize(); ++i) nums += tempStack[i];
 
                 std::cout << "new number: " << nums << std::endl << "token.type: " << -1 << std::endl << std::endl;
 
@@ -280,7 +491,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
             else if (token.type == OPERATOR) {
 
-                while (opStack.size() > 0 && opStack.back().value != "(" && (
+                while (opStack.getSize() > 0 && opStack.back().value != "(" && (
                     opStack.back().precedence > token.precedence || (
                     opStack.back().precedence == token.precedence &&
                     token.associativity))) {
@@ -301,7 +512,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
             else if (token.type == RIGHT_BRACKET) {
 
-                while (opStack.size() > 0 && opStack.back().type != LEFT_BRACKET) {
+                while (opStack.getSize() > 0 && opStack.back().type != LEFT_BRACKET) {
 
                     popAppend(temp, opStack, outStack);
 
@@ -311,19 +522,19 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
 
 
-        } catch (...) {}
+        } catch (...) {std::cout << "well shit, this isn't supposed to happen" << std::endl;}
 
 
     }
 
 
 
-    while (opStack.size() > 0) popAppend(temp, opStack, outStack);
+    while (opStack.getSize() > 0) popAppend(temp, opStack, outStack);
 
     
     std::cout << "equation in RPN: ";
 
-    for (Token i : outStack) std::cout << i.value << " ";
+    for (size_t i = 0; i < outStack.getSize(); ++i) std::cout << outStack[i].value << " ";
 
     std::cout << std::endl;
 
@@ -331,22 +542,22 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
 
 }
 
-std::vector<double> findNumbers(int type, std::deque<double> hist) {
+std::vector<double> findNumbers(int type, Vector<double> hist) {
 
-    if (type) return std::vector<double> {hist.at(hist.size() - 1), 0.0};
+    if (type) return std::vector<double> {hist.operator[](hist.getSize() - 1), 0.0};
 
-    else return std::vector<double> {hist.at(hist.size() - 2), hist.back()};
+    else return std::vector<double> {hist.operator[](hist.getSize() - 2), hist.back()};
 
     return std::vector<double> {0.0, 0.0};
 }
 
-double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
+double shuntingYardEvaluator(Vector<Token> equation, bool isRadians) {
 
-    std::deque<Token> stack = equation;
+    Vector<Token> stack = equation;
 
-    std::deque<double> hist = {};
+    Vector<double> hist = {};
 
-    while (stack.size() > 0 && stack.size() < 10000) {
+    while (stack.getSize() > 0 && stack.getSize() < 10000) {
 
         Token i = stack.front();
         stack.pop_front();
@@ -371,7 +582,7 @@ double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
         }
     }
 
-    return hist.at(0);
+    return hist.operator[](0);
 
 }
 
@@ -389,15 +600,15 @@ int main() {
 
     std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
 
-    equation = "s(60)";
+    // equation = "s(60)";
 
 
 
-    std::deque<Token> stack = shuntingYardConverter(equation);
+    Vector<Token> stack = shuntingYardConverter(equation);
 
     std::cout << "equation in RPN: ";
-    for (Token i : stack) {
-        std::cout << "value: " << i.value << std::endl << "type: " << i.type << std::endl << std::endl;
+    for (size_t i = 0; i < stack.getSize(); ++i) {
+        std::cout << "value: " << stack[i].value << std::endl << "type: " << stack[i].type << std::endl << std::endl;
     }
     std::cout << std::endl;
 
