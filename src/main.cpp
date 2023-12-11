@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <deque>
 #include <bits/stdc++.h>
 #include <string>
 #include <string.h>
@@ -106,7 +106,7 @@ class Token {
 
 
 
-std::vector<Token> TOKENS;
+std::deque<Token> TOKENS;
 
 void makeTokens() {
 
@@ -169,19 +169,19 @@ int getToken(std::string input, Token *token) {
 
 #define newToken(input, stack, token) ({\
     input = stack.front();\
-    stack.erase(stack.begin());\
+    stack.pop_front();\
     getToken(input, &token);\
 })
 
 
 
-std::vector<Token> shuntingYardConverter(std::string equation) {
+std::deque<Token> shuntingYardConverter(std::string equation) {
 
-    std::vector<std::string> inStack;
-    std::vector<Token> opStack;
-    std::vector<Token> outStack;
-    std::vector<std::string> tempStack;
-    std::vector<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
+    std::deque<std::string> inStack;
+    std::deque<Token> opStack;
+    std::deque<Token> outStack;
+    std::deque<std::string> tempStack;
+    std::deque<std::string> characters{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "-"};
 
     int index = 0;
 
@@ -195,7 +195,7 @@ std::vector<Token> shuntingYardConverter(std::string equation) {
 
     for (char c: equation) inStack.push_back(std::string(1, c));
 
-    std::cout << "original vector: ";
+    std::cout << "original deque: ";
 
     for (std::string i: inStack) {std::cout << i;}
 
@@ -224,7 +224,7 @@ std::vector<Token> shuntingYardConverter(std::string equation) {
         index++;
     }
 
-    std::cout << "new vector: ";
+    std::cout << "new deque: ";
 
     for (std::string i: inStack) {std::cout << i;}
 
@@ -331,7 +331,7 @@ std::vector<Token> shuntingYardConverter(std::string equation) {
 
 }
 
-std::vector<double> findNumbers(int type, std::vector<double> hist) {
+std::vector<double> findNumbers(int type, std::deque<double> hist) {
 
     if (type) return std::vector<double> {hist.at(hist.size() - 1), 0.0};
 
@@ -340,16 +340,16 @@ std::vector<double> findNumbers(int type, std::vector<double> hist) {
     return std::vector<double> {0.0, 0.0};
 }
 
-double shuntingYardEvaluator(std::vector<Token> equation, bool isRadians) {
+double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
 
-    std::vector<Token> stack = equation;
+    std::deque<Token> stack = equation;
 
-    std::vector<double> hist = {};
+    std::deque<double> hist = {};
 
     while (stack.size() > 0 && stack.size() < 10000) {
 
         Token i = stack.front();
-        stack.erase(stack.begin());
+        stack.pop_front();
 
         if (i.type == NUMBER) hist.push_back(std::stod(i.value));
 
@@ -393,7 +393,7 @@ int main() {
 
 
 
-    std::vector<Token> stack = shuntingYardConverter(equation);
+    std::deque<Token> stack = shuntingYardConverter(equation);
 
     std::cout << "equation in RPN: ";
     for (Token i : stack) {
