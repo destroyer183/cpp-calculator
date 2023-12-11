@@ -3,6 +3,8 @@
 #include <bits/stdc++.h>
 #include <string>
 #include <string.h>
+#include <cstddef>
+#include <cstring>
 #define PI 3.14159265358979323846
 #define degreesToRadians(degrees) (((degrees) * (PI)) / 180.0)
 #define radiansToDegrees(radians) (((radians) * 180) / (PI))
@@ -34,234 +36,196 @@ const int COMMA = 5;
 const int LEFT_BRACKET = 2;
 const int RIGHT_BRACKET = 3;
 
+
 template <typename T>
-class Vector {
+class Vector
+{
 private:
-    size_t size;  // Number of elements in the vector
-    size_t capacity;  // Capacity of the array
-    T* array;  // Dynamic array to store elements
+  size_t size;     // Number of elements in the vector
+  size_t capacity; // Capacity of the array
+  T *array;        // Dynamic array to store elements
 
 public:
+    Vector(size_t initialSize = 0)
+  {
 
-    // Constructor
-    Vector(size_t initialSize = 0) : size(initialSize), capacity(initialSize * 2) {
+    size = 0;
+    capacity = initialSize;
 
-        if (capacity == 0) capacity = 200;
-        array = new T[capacity];
+    if (capacity == 0)
+    {
+      capacity = 10;
     }
 
-    // Destructor
-    ~Vector() {
-        delete[] array;
+    array = new T[capacity];
+  }
+
+  ~Vector()
+  {
+    if (!array)
+      return;
+    delete[] array;
+  }
+
+  T &operator[](size_t index) { return array[index]; }
+
+  size_t getSize() const { return size; }
+
+  T front() const { return array[0]; }
+
+  T back() { return array[size - 1]; }
+
+  void double_size()
+  {
+
+    capacity = capacity * 2 + 1;
+
+    T *newArray = new T[capacity];
+
+    std::memcpy(newArray, array, size * sizeof(T));
+
+    delete[] array;
+    array = newArray;
+  }
+
+  void push_back(const T &value)
+  {
+
+    if (size == capacity)
+    {
+      double_size();
     }
 
-    // Getter for size
-    size_t getSize() const {
-        return size;
+    array[size] = value;
+    ++size;
+  }
+
+  void pop_front()
+  {
+
+    if (size == 0)
+    {
+      return;
     }
 
-    // Access element at index
-    T& operator[](size_t index) {
-        return array[index];
+    if (size == 1)
+    {
+      --size;
+      return;
     }
 
-    // Push element to the back
-    void push_back(const T& value) {
+    std::memmove(array, array + 1, (size - 1) * sizeof(T));
 
-        if (size == capacity) {
+    --size;
+  }
 
-            // increasee the capacity
-            capacity++;
+  void pop_back()
+  {
 
-            // Create a new array with double capacity
-            T* newArray = new T[capacity];
-
-            // Copy elements to the new array
-            for (size_t i = 0; i < size; ++i) {
-                newArray[i] = array[i];
-            }
-
-            // Delete the old array
-            delete[] array;
-
-            // Point to the new array
-            array = newArray;
-        }
-
-        // Add the new element to the end
-        array[size] = value;
-        ++size;
+    if (size == 0)
+    {
+      return;
     }
 
-    // pop element from front
-    void pop_front() {
+    --size;
+  }
 
-        // create a new array to store old array without first index
-        T* newArray = new T[capacity];
+  bool pop(size_t index, T *outvalue)
+  {
 
-        // add every element from old array to new array, but skip first element
-        for (size_t i = 0; i < size-1; ++i) {
-            newArray[i] = array[i + 1];
-        }
-
-        // delete the old array
-        delete[] array;
-
-        // point to the new array
-        array = newArray;
-        --size;
+    if (index >= size || outvalue == nullptr)
+    {
+      return false;
     }
 
-    // pop element from back
-    void pop_back() {
+    *outvalue = array[index];
 
-        // create a new array to store old array without first index
-        T* newArray = new T[capacity];
-
-        // add every element from old array to new array, but skip last element
-        // if (size == 2) newArray[0] = array[0];
-
-        // else if (size > 2) {
-
-        for (size_t i = 0; i < size-1; ++i) {
-            newArray[i] = array[i];
-        }
-        // }
-
-        // delete the old array
-        delete[] array;
-
-        // point to the new array
-        array = newArray;
-        --size;
-
+    if (index == 0)
+    {
+      pop_front();
+      return true;
     }
 
-    // function to pop element by index and return popped element
-    T pop(int index=-10) {
-
-        if (index == -10) index = size-1;
-
-        // create a new array to store old array without element at index
-        T* newArray = new T[capacity];
-
-        // add every element before index from old array to new array
-        for (int i = 0; i < index; ++i) {
-            newArray[i] = array[i];
-        }
-
-        // add every element after index from old array to new array
-        for (size_t i = index; i < size-1; ++i) {
-            newArray[i] = array[i + 1];
-        }
-
-        // create item to be returned
-        T item = array[index];
-
-        // delete the old array
-        delete[] array;
-
-        // point to the new array
-        array = newArray;
-        --size;
-
-        // return popped item
-        return item;
+    if (index == size - 1)
+    {
+      pop_back();
+      return true;
     }
 
+    std::memmove(array + index, array + index + 1,
+                 (size - index - 1) * sizeof(T));
 
-    // get element at front
-    T front() {return array[0];}
-    
+    --size;
+    return true;
+  }
 
+  void insert(int index, const T &value)
+  {
 
-    // get element at back
-    T back() {return array[size-1];}
-
-
-    // insert element at index
-    void insert(int index, const T& value) {
-
-        if (size == capacity) {
-
-            // increase the capacity
-            capacity++;
-        }
-
-        // Create a new array with more capacity
-        T* newArray = new T[capacity];
-        
-
-        // add every element before index from old array to new array
-        for (int i = 0; i < index; ++i) {
-            newArray[i] = array[i];
-        }
-
-        // add element at index
-        newArray[index] = value;
-
-        // add every element after index from old array to new array
-        for (size_t i = index; i < size; ++i) {
-            newArray[i + 1] = array[i];
-        }
-
-        // delete old array
-        delete[] array;
-
-        // point to the new array
-        array = newArray;
-        ++size;
-
+    if (index == size)
+    {
+      push_back(value);
+      return;
     }
 
-    // function to return index of string if string is in array
-    int find(std::string value) {
+    if (size == capacity)
+    {
+      double_size();
+    }
 
-        // loop through every index of the array
-        for (size_t i = 0; i < size; ++i) {
-            if (array[i] == value) return i;
+    std::memmove(array + index + 1, array + index,
+                 (size - index) * sizeof(T));
+
+    array[index] = value;
+    ++size;
+  }
+
+  int find(T value)
+  {
+
+    for (size_t i = 0; i < size; ++i)
+    {
+      if (array[i] == value)
+        return i;
+    }
+
+    return -1;
+  }
+
+    int rfind(T value)
+    {
+
+        for (size_t i = size; i > 0; --i)
+        {
+          if (array[i] == value)
+            return i;
         }
 
         return -1;
-
-
-    }
-
-    // function to return index of last occurence of string if string is in array
-    int rfind(std::string value) {
-
-        // loop through every index of the array backwards
-        for (size_t i = size; i > 0; --i) {
-            if (array[i] == value) return i;
-        }
-    
-        return -1;
-
     }
 
     void printStack() {
+
         std::cout << "stack: ";
 
         for (size_t i = 0; i < size; ++i) {
-            std::cout << array[i].value;
+            std::cout << array[i].value << " ";
         }
+
         std::cout << std::endl;
     }
 
     void print_stack() {
+
         std::cout << "stack: ";
 
         for (size_t i = 0; i < size; ++i) {
-            std::cout << array[i];
+            std::cout << array[i] << " ";
         }
+
         std::cout << std::endl;
     }
-
-
 };
-
-
-
 
 enum MathOperation {
     Sine,
@@ -288,47 +252,68 @@ class Token {
 
     public:
 
-        int type;
-        int precedence;
-        bool associativity;
-        std::string value;
-        MathOperation apply;
+    int type;
+    int precedence;
+    bool associativity;
+    std::string value;
+    MathOperation apply;
 
-        Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", MathOperation applye = null) {
-            type = typee;
-            precedence = precedencee;
-            associativity = associativitye;
-            value = valuee;
-            apply = applye;
+    Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", MathOperation applye = null) {
+        type = typee;
+        precedence = precedencee;
+        associativity = associativitye;
+        value = valuee;
+        apply = applye;
+    }
+
+    double math(MathOperation operation, double x, double y, bool isRadians) {
+
+        switch (operation) {
+            case Sine:       if (isRadians) return sin(x); else return sin(degreesToRadians(x));
+            case Cosine:     if (isRadians) return cos(x); else return cos(degreesToRadians(x));
+            case Tangent:    if (isRadians) return tan(x); else return tan(degreesToRadians(x));
+            case aSine:      if (isRadians) return asin(x); else return asin(radiansToDegrees(x));
+            case aCosine:    if (isRadians) return acos(x); else return acos(radiansToDegrees(x));
+            case aTangent:   if (isRadians) return atan(x); else return atan(radiansToDegrees(x));
+            case Logarithm:  return log(x);
+            case Factorial:  return tgamma(x + 1);
+            case SquareRoot: return sqrt(x);
+
+            case Exponential:    return pow(x, y);
+            case Modulo: {int x1 = int (x); int y1 = int (y); return x1 % y1;}
+            case Division:       return x / y;
+            case Multiplication: return x * y;
+            case Addition:       return x + y;
+            case Subtraction:    return x - y;
+
+            case null: std::cout << "well shit, there is a bug." << std::endl;
+
         }
+        return 0.0;
+    }
 
-        double math(MathOperation operation, double x, double y, bool isRadians) {
-
-            
-
-            switch (operation) {
-                case Sine:       if (isRadians) return sin(x); else return sin(degreesToRadians(x));
-                case Cosine:     if (isRadians) return cos(x); else return cos(degreesToRadians(x));
-                case Tangent:    if (isRadians) return tan(x); else return tan(degreesToRadians(x));
-                case aSine:      if (isRadians) return asin(x); else return asin(radiansToDegrees(x));
-                case aCosine:    if (isRadians) return acos(x); else return acos(radiansToDegrees(x));
-                case aTangent:   if (isRadians) return atan(x); else return atan(radiansToDegrees(x));
-                case Logarithm:  return log(x);
-                case Factorial:  return tgamma(x + 1);
-                case SquareRoot: return sqrt(x);
-
-                case Exponential:    return pow(x, y);
-                case Modulo: {int x1 = int (x); int y1 = int (y); return x1 % y1;}
-                case Division:       return x / y;
-                case Multiplication: return x * y;
-                case Addition:       return x + y;
-                case Subtraction:    return x - y;
-
-                case null: std::cout << "well shit, there is a bug." << std::endl;
-
-            }
-            return 0.0;
+    Token &operator=(const Token &other) {
+        if (this != &other) {
+            this->type = other.type;
+            this->precedence = other.precedence;
+            this->associativity = other.associativity;
+            this->value.assign(other.value);
+            this->apply = other.apply;
         }
+        return *this;
+    }
+
+    Token &operator=(Token &&other) noexcept {
+
+        if (this != &other) {
+            this->type = other.type;
+            this->precedence = other.precedence;
+            this->associativity = other.associativity;
+            this->value.assign(other.value);
+            this->apply = other.apply;
+        }
+        return *this;
+    }
 };
 
 
@@ -642,11 +627,10 @@ int main() {
 
     makeTokens();
 
-    Token token = TOKENS[0];
 
-    bool isRadians = false;
+    // bool isRadians = false
 
-    std::cout << "test: " << token.math(token.apply, 60, 0, isRadians) << std::endl;
+    // std::cout << "test: " << token.math(token.apply, 60, 0, isRadians) << std::endl;
 
     std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _  2 ^ (5 _ 2)) / 15";
 
