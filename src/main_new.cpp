@@ -3,108 +3,15 @@
 #include <bits/stdc++.h>
 #include <string>
 #include <string.h>
-#define PI 3.14159265358979323846
-#define degreesToRadians(degrees) ((degrees * PI) / 180.0)
-#define radiansToDegrees(radians) ((radians * 180) / PI)
+#include "calc.h"
+#include "token.h"
+
 #define defineToken(type, precedence, associativity, value, operation) TOKENS.push_back(Token(type, precedence, associativity, value, operation))
 #define popAppend(temp, popStack, appendStack) ({\
     temp = popStack.back();\
     appendStack.push_back(temp);\
     popStack.pop_back();\
     })
-
-
-
-// #define I_declareth int
-// #define to_be_equivalent_to =
-// #define my_good_sir ;
-
-// I_declareth x to_be_equivalent_to 3 my_good_sir
-
-
-
-const bool LEFT = true;
-const bool RIGHT = false;
-
-const int NUMBER = -1;
-const int OPERATOR = 0;
-const int BRACKET = 3;
-const int FUNCTION = 1;
-const int COMMA = 5;
-const int LEFT_BRACKET = 2;
-const int RIGHT_BRACKET = 3;
-
-
-
-enum mathOperation {
-    Sine,
-    Cosine,
-    Tangent,
-    aSine,
-    aCosine,
-    aTangent,
-    Logarithm,
-    Factorial,
-    SquareRoot,
-    Exponential,
-    Modulo,
-    Division,
-    Multiplication,
-    Addition,
-    Subtraction,
-    Null
-};
-
-
-
-class Token {
-
-    public:
-
-        int type;
-        int precedence;
-        bool associativity;
-        std::string value;
-        mathOperation operation;
-
-        Token(int typee = 0, int precedencee = 0, bool associativitye = false, std::string valuee = "", mathOperation operatione = Null) {
-            type = typee;
-            precedence = precedencee;
-            associativity = associativitye;
-            value = valuee;
-            operation = operatione;
-        }
-
-        double math(double x, double y, bool isRadians) {
-
-            switch (operation) {
-
-                case Sine:       if (isRadians) return sin(x); else return sin(degreesToRadians(x));
-                case Cosine:     if (isRadians) return cos(x); else return cos(degreesToRadians(x));
-                case Tangent:    if (isRadians) return tan(x); else return tan(degreesToRadians(x));
-                case aSine:      if (isRadians) return asin(x); else return asin(radiansToDegrees(x));
-                case aCosine:    if (isRadians) return acos(x); else return acos(radiansToDegrees(x));
-                case aTangent:   if (isRadians) return atan(x); else return atan(radiansToDegrees(x));
-                case Logarithm:  return log(x);
-                case Factorial:  return tgamma(x + 1);
-                case SquareRoot: return sqrt(x);
-
-                case Exponential:    return pow(x, y);
-                case Modulo:         return int(x) % int(y);
-                case Division:       return x / y;
-                case Multiplication: return x * y;
-                case Addition:       return x + y;
-                case Subtraction:    return x - y;
-
-                case Null: std::cout << "well crap, there is a bug." << std::endl;
-
-                // default: std::cout << "this isn't suppsed to happen..." << std::endl;
-
-            }
-            return 0.0;
-        }
-};
-
 
 
 std::deque<Token> TOKENS;
