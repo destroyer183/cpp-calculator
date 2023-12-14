@@ -2,8 +2,7 @@
 #include "token.h"
 #include "calc.h"
 #include "math.h"
-#include "iostream"
-
+#include "stuff arduino needs/string"
 
 
 Token::Token(tokenType typeInput, int precedenceInput, bracketAssociativity associativityInput, std::string valueInput, mathOperation operationInput) {
@@ -36,7 +35,7 @@ double Token::math(double x, double y, bool isRadians) {
         case Addition:       return x + y;
         case Subtraction:    return x - y;
 
-        case Null: std::cout << "well crap, there is a bug." << std::endl;
+        // case Null: std::cout << "well crap, there is a bug." << std::endl;
 
         // default: std::cout << "this isn't suppsed to happen..." << std::endl;
 

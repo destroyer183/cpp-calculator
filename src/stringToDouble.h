@@ -2,10 +2,7 @@
 #ifndef STRINGTODOUBLE_H
 #define STRINGTODOUBLE_H
 
-#include <string>
-
-
-
+#include "stuff arduino needs/string"
 
 double mapping(char input) { // wish I could use actual mapping for this, but arduino doesn't have it
 
@@ -36,12 +33,13 @@ double pow(double base, double power) {
 
 
 double stringToDouble(std::string input) {
+
     double output = 0;
     
     bool negative = false;
     bool decimal = false;
     int decimalIndex = 0;
-    
+
     for (char i : input) {
 
         double num = mapping(i);

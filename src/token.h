@@ -3,7 +3,7 @@
 #define TOKEN_H
 
 
-#include <string>
+#include "stuff arduino needs/string"
 
 #include "calc.h"
 
