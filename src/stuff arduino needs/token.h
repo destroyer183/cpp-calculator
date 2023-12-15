@@ -3,7 +3,7 @@
 #define TOKEN_H
 
 
-#include <string>
+#include "stuff arduino needs/string"
 
 #include "calc.h"
 
@@ -17,12 +17,12 @@ class Token {
         bracketAssociativity associativity;
         mathOperation operation;
         int precedence;
-        std::string value;
+        String value;
 
         Token(tokenType typeInput = tokenType::FUNCTION,
               int precedenceInput = 0,
               bracketAssociativity associativityInput = LEFT,
-              std::string valueInput = "",
+              String valueInput = "",
               mathOperation operationInput = Null);
 
         double math(double x, double y, bool isRadians);

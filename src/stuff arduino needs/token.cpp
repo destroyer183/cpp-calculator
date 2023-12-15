@@ -3,10 +3,8 @@
 #include "calc.h"
 #include "math.h"
 
-#include <string>
 
-
-Token::Token(tokenType typeInput, int precedenceInput, bracketAssociativity associativityInput, std::string valueInput, mathOperation operationInput) {
+Token::Token(tokenType typeInput, int precedenceInput, bracketAssociativity associativityInput, String valueInput, mathOperation operationInput) {
     type = typeInput;
     precedence = precedenceInput;
     associativity = associativityInput;

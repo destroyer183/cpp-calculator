@@ -2,7 +2,6 @@
 #ifndef STRINGTODOUBLE_H
 #define STRINGTODOUBLE_H
 
-#include <string>
 
 double mapping(char input) { // wish I could use actual mapping for this, but arduino doesn't have it
 
@@ -32,7 +31,7 @@ double pow(double base, double power) {
 }
 
 
-double stringToDouble(std::string input) {
+double stringToDouble(String input) {
 
     double output = 0;
     
