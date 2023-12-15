@@ -24,7 +24,7 @@ double Token::math(double x, double y, bool isRadians) {
         case aCosine:    if (isRadians) return acos(x); else return acos(radiansToDegrees(x));
         case aTangent:   if (isRadians) return atan(x); else return atan(radiansToDegrees(x));
         case Logarithm:  return log(x);
-        case Factorial:  return tgamma(x + 1);
+        case Factorial: int factorial = 1; if (x < 0) return 0; else for (int i = 1; i <= x; ++i) {factorial *= i;} return factorial;
         case SquareRoot: return sqrt(x);
 
         case Exponential:    return pow(x, y);
