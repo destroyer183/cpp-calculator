@@ -1,5 +1,3 @@
-
-
 #ifndef CALC_H
 #define CALC_H
 
@@ -10,29 +8,28 @@
 
 #define radiansToDegrees(radians) ((radians * 180) / PI)
 
-
 enum mathOperation {
-    Sine,
-    Cosine,
-    Tangent,
-    aSine,
-    aCosine,
-    aTangent,
-    Logarithm,
-    Factorial,
-    SquareRoot,
-    Exponential,
-    Modulo,
-    Division,
-    Multiplication,
-    Addition,
-    Subtraction,
-    Null
+  Sine,
+  Cosine,
+  Tangent,
+  aSine,
+  aCosine,
+  aTangent,
+  Logarithm,
+  Factorial,
+  SquareRoot,
+  Exponential,
+  Modulo,
+  Division,
+  Multiplication,
+  Addition,
+  Subtraction,
+  Null
 };
 
 enum bracketAssociativity {
-    LEFT,
-    RIGHT
+  LEFT,
+  RIGHT
 };
 
 enum tokenType {
