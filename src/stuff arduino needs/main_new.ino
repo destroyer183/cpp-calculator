@@ -658,37 +658,37 @@ void serialHandler(String input) { // function to handle serial inputs
   equationString += numberString; // add number data to the equation
   numberString = ""; // clear number data
 
-  if (input == "Sine"       || input == "sin")  equationString += "s("; // add Sine function to equation
-  if (input == "Cosine"     || input == "cos")  equationString += "c("; // add Cosine function to equation
-  if (input == "Tangent"    || input == "tan")  equationString += "t("; // add Tangent function to equation
-  if (input == "ArcSine"    || input == "asin") equationString += "S("; // add ArcSine function to equation
-  if (input == "ArcCosine"  || input == "acos") equationString += "C("; // add ArcCosine function to equation
-  if (input == "ArcTangent" || input == "atan") equationString += "T("; // add ArcTangent function to equation
-  if (input == "Logarithm"  || input == "log")  equationString += "l("; // add Logarithm function to equation
-  if (input == "Factorial"  || input == "!")    equationString += "f("; // add Factorial function to equation
-  if (input == "SquareRoot" || input == "sqrt") equationString += "#("; // add Square Root function to equation
+  if (input == "Sine"       || input == "sin")  {equationString += "s("; return;} // add Sine function to equation
+  if (input == "Cosine"     || input == "cos")  {equationString += "c("; return;} // add Cosine function to equation
+  if (input == "Tangent"    || input == "tan")  {equationString += "t("; return;} // add Tangent function to equation
+  if (input == "ArcSine"    || input == "asin") {equationString += "S("; return;} // add ArcSine function to equation
+  if (input == "ArcCosine"  || input == "acos") {equationString += "C("; return;} // add ArcCosine function to equation
+  if (input == "ArcTangent" || input == "atan") {equationString += "T("; return;} // add ArcTangent function to equation
+  if (input == "Logarithm"  || input == "log")  {equationString += "l("; return;} // add Logarithm function to equation
+  if (input == "Factorial"  || input == "!")    {equationString += "f("; return;} // add Factorial function to equation
+  if (input == "SquareRoot" || input == "sqrt") {equationString += "#("; return;} // add Square Root function to equation
 
-  if (input == "Exponential"    || input == "^") equationString += " ^ "; // add Exponential operator to equation
-  if (input == "Modulus"        || input == "%") equationString += " % "; // add Modulus operator to equation
-  if (input == "Division"       || input == "/") equationString += " / "; // add Division operator to equation
-  if (input == "Multiplication" || input == "*") equationString += " * "; // add Multiplication operator to equation
-  if (input == "Addition"       || input == "+") equationString += " + "; // add Addition operator to equation
-  if (input == "Subtraction"    || input == "-") equationString += " _ "; // add Subtraction operator to equation
+  if (input == "Exponential"    || input == "^") {equationString += " ^ "; return;} // add Exponential operator to equation
+  if (input == "Modulus"        || input == "%") {equationString += " % "; return;} // add Modulus operator to equation
+  if (input == "Division"       || input == "/") {equationString += " / "; return;} // add Division operator to equation
+  if (input == "Multiplication" || input == "*") {equationString += " * "; return;} // add Multiplication operator to equation
+  if (input == "Addition"       || input == "+") {equationString += " + "; return;} // add Addition operator to equation
+  if (input == "Subtraction"    || input == "-") {equationString += " _ "; return;} // add Subtraction operator to equation
 
-  if (input == "(") equationString += "("; // add left bracket to equation
-  if (input == ")") equationString += ")"; // add right bracket to equation
+  if (input == "(") {equationString += "("; return;} // add left bracket to equation
+  if (input == ")") {equationString += ")"; return;} // add right bracket to equation
 
-  if (input == "clear") clearData(); // run function to clear data
-  if (input == "solve") solve(); // run function to solve equation
+  if (input == "clear") {clearData(); return;} // run function to clear data
+  if (input == "solve") {solve(); return;} // run function to solve equation
 
-  if (input == "Radians") isRadians = true;  Serial.println("mode set to Radians."); // change calculator mode to Radians
-  if (input == "Degrees") isRadians = false; Serial.println("mode set to Degrees."); // change calculator mode to Degrees
+  if (input == "Radians") {isRadians = true;  Serial.println("mode set to Radians."); return;} // change calculator mode to Radians
+  if (input == "Degrees") {isRadians = false; Serial.println("mode set to Degrees."); return;} // change calculator mode to Degrees
 
-  if (input == "ENABLE MANUAL OVERRIDE")  manualOverride = true;  Serial.println("manual override enabled."); // enable manual override. This allows the user to
-                                                                                                              // type in entire equations into the serial monitor, 
-                                                                                                              // rather than single functions and operators at a time.
+  if (input == "ENABLE MANUAL OVERRIDE")  {manualOverride = true;  Serial.println("manual override enabled."); return;} // enable manual override. This allows the user to
+                                                                                                                        // type in entire equations into the serial monitor, 
+                                                                                                                        // rather than single functions and operators at a time.
 
-  if (input == "DISABLE MANUAL OVERRIDE") manualOverride = false; Serial.println("manual override disabled."); //disable manual override
+  if (input == "DISABLE MANUAL OVERRIDE") {manualOverride = false; Serial.println("manual override disabled."); return;} //disable manual override
 }
 
 
