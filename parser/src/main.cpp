@@ -335,9 +335,9 @@ std::vector<double> findNumbers(int type, std::deque<double> hist) {
     return std::vector<double> {0.0, 0.0};
 }
 
-double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
+std::string shuntingYardEvaluator(std::string equation, bool isRadians) {
 
-    std::deque<Token> stack = equation;
+    std::deque<Token> stack = shuntingYardConverter(equation);
 
     std::deque<double> hist = {};
 
@@ -366,7 +366,7 @@ double shuntingYardEvaluator(std::deque<Token> equation, bool isRadians) {
         }
     }
 
-    return hist.at(0);
+    return std::to_string(hist.at(0));
 
 }
 
@@ -388,16 +388,16 @@ int main() {
 
 
 
-    std::deque<Token> stack = shuntingYardConverter(equation);
+    // std::deque<Token> stack = shuntingYardConverter(equation);
 
-    std::cout << "equation in RPN: ";
-    for (Token i : stack) {
-        std::cout << "value: " << i.value << std::endl << "type: " << i.type << std::endl << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "equation in RPN: ";
+    // for (Token i : stack) {
+    //     std::cout << "value: " << i.value << std::endl << "type: " << i.type << std::endl << std::endl;
+    // }
+    // std::cout << std::endl;
 
 
-    double solution = shuntingYardEvaluator(stack, isRadians);
+    std::string solution = shuntingYardEvaluator(equation, isRadians);
 
     std::cout << "solution: " << solution << std::endl;
 
