@@ -19,6 +19,8 @@
 // #define to_be_equivalent_to =
 // #define my_good_sir ;
 
+// int x = 3;
+
 // I_declareth x to_be_equivalent_to 3 my_good_sir
 
 
@@ -47,11 +49,11 @@ enum Associativity {
 };
 
 enum tokenType {
-  NUMBER = -1,
-  OPERATOR = 0,
-  FUNCTION = 1,
-  LEFT_BRACKET = 2,
-  RIGHT_BRACKET = 3,
+  NUMBER,
+  OPERATOR,
+  FUNCTION,
+  LEFT_BRACKET,
+  RIGHT_BRACKET,
 };
 
 
