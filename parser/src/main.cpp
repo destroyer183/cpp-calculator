@@ -384,7 +384,7 @@ int main() {
 
     std::string equation = "4 + (3! * (52 + 73 * #(64) / 2 _ 220) _ 2 ^ (5 _ 2)) / 15";
 
-    equation = "";
+    // equation = "";
 
 
 
