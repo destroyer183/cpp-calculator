@@ -24,7 +24,7 @@
 // I_declareth x to_be_equivalent_to 3 my_good_sir
 
 
-enum mathOperation {
+enum MathOperation {
     Sine,
     Cosine,
     Tangent,
@@ -48,7 +48,7 @@ enum Associativity {
   RIGHT
 };
 
-enum tokenType {
+enum TokenType {
   NUMBER,
   OPERATOR,
   FUNCTION,
@@ -61,13 +61,13 @@ class Token {
 
     public:
 
-        tokenType type;
+        TokenType type;
         int precedence;
         Associativity associativity;
         std::string value;
-        mathOperation operation;
+        MathOperation operation;
 
-        Token(tokenType typeInput = OPERATOR, int precedenceInput = 0, Associativity associativityInput = LEFT, std::string valueInput = "", mathOperation operationInput = Null) {
+        Token(TokenType typeInput = OPERATOR, int precedenceInput = 0, Associativity associativityInput = LEFT, std::string valueInput = "", MathOperation operationInput = Null) {
             type = typeInput;
             precedence = precedenceInput;
             associativity = associativityInput;
@@ -280,7 +280,7 @@ std::deque<Token> shuntingYardConverter(std::string equation) {
                 while (opStack.size() > 0 && opStack.back().value != "(" && (
                     opStack.back().precedence > token.precedence || (
                     opStack.back().precedence == token.precedence &&
-                    token.associativity))) {
+                    token.associativity == RIGHT))) {
 
                         popAppend(temp, opStack, outStack);
 
